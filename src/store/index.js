@@ -21,10 +21,19 @@ const store = new Vuex.Store({
         // console.log('exist')
       }else{
         payload.count = 1;
+        payload.checked = false;
         state.cartList.push(payload);
         // console.log('new')
       }
       console.log(state.cartList);
+    }
+  },
+  getters: {
+    cartList(state) {
+      return state.cartList
+    },
+    cartCount(state, getters) {
+      return getters.cartList.length
     }
   }
 })

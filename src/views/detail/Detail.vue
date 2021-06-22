@@ -102,7 +102,7 @@
         addition.image = this.topImages[0];
         addition.title = this.goods.title;
         addition.desc = this.goods.desc;
-        addition.newPrice = this.goods.newPrice
+        addition.Price = this.goods.realPrice
 
         this.$store.commit('addCart', addition)
       }
