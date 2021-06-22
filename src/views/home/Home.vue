@@ -2,15 +2,22 @@
   <div id="home">
     <nav-bar class="home-nev"><div slot="center">购物</div></nav-bar>
 
-    <scroll class="content" ref="scroll">
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      :pullUpLoad="true"
+      @scroll="contentScroll"
+      @pullingUp="loadMore">
       <div>
         <home-swiper :banners="banners"/>
         <recommend-view :recommends="recommends"/>
         <tab-control @tabClick="tabClick" :titles="['流行', '新款', '精选']"></tab-control>
-        <goods-list :goodsList="goods[currentType].list"></goods-list></div>
+        <goods-list :goodsList="goods[currentType].list"></goods-list>
+      </div>
     </scroll>
 
-    <back-top @backTop="backTop"/>
+    <back-top @backTop="backTop" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -46,7 +53,9 @@ export default {
         'new': {page: 1, list: []},
         'sell': {page: 1, list: []}
       },
-      currentType: 'pop'
+      currentType: 'pop',
+      isShowBackTop: false,
+      saveY: 0
     }
   },
   created() {
@@ -60,6 +69,21 @@ export default {
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
+  mounted() {
+    this.$bus.$on('itemImageLoad', ()=> {
+      // console.log('itemImageLoad')
+      this.$refs.scroll.scroll.refresh()
+    })
+  },
+  activated() {
+    // console.log('activated')
+    this.$refs.scroll.scroll.scrollTo(0, this.saveY, 10)
+    this.$refs.scroll.scroll.refresh()
+  },
+  deactivated() {
+    // console.log('deactivated')
+    this.saveY = this.$refs.scroll.scroll.y
+  },
   methods: {
     tabClick(index){
       switch (index) {
@@ -71,15 +95,27 @@ export default {
           break;
       }
     },
+    backTop() {
+      // console.log('backTop')
+      this.$refs.scroll.scroll.scrollTo(0, 0, 200)
+    },
+    contentScroll(position){
+      // console.log(position)
+      // console.log(this.isShowBackTop);
+      this.isShowBackTop = (-position.y) > 1000
+    },
+    loadMore(){
+      // console.log('上拉刷新')
+      this.getHomeGoods(this.currentType)
+      this.$refs.scroll.scroll.finishPullUp()
+      this.$refs.scroll.scroll.refresh()
+    },
+
     getHomeGoods(type) {
       getHomeData(type, this.goods[type].page).then(res => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
       })
-    },
-    backTop() {
-      // console.log('backTop')
-      this.$refs.scroll.scroll.scrollTo(0, 0, 200)
     }
   }
 }
