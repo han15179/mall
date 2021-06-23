@@ -53,8 +53,8 @@ export default {
 
     .menu-list-item.active {
         font-weight: 700;
-        color: var(--color-high-text);
+        color: #6699ff;
         background-color: #fff;
-        border-left: 3px solid var(--color-high-text);
+        border-left: 3px solid #6699ff;
     }
 </style>

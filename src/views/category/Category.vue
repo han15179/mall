@@ -106,9 +106,11 @@ export default {
   }
 
   .nav-bar {
-    background-color: var(--color-tint);
+    background-color: #6699ff;
     font-weight: 700;
     color: #fff;
+    position: relative;
+    z-index: 9;
   }
 
   .content {
